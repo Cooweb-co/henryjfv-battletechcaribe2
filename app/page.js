@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Chat from '../components/Chat'
 import Dashboard from '../components/Dashboard'
 import Footer from '../components/Footer'
+import Logo from '../components/Logo'
 
 /**
  * Cada navegador tiene su propio id: sin esto, todas las visitas comparten los
@@ -30,8 +31,11 @@ export default function Home() {
 
   return (
     <main className="shell">
-      <header>
-        <h1>FinBot</h1>
+      <header className="site-header">
+        <h1>
+          <Logo />
+          <span className="brand-name">FinBot</span>
+        </h1>
         <p>Registra tus gastos conversando y mira cómo se comporta tu plata.</p>
       </header>
 

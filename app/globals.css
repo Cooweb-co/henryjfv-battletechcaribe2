@@ -37,6 +37,26 @@ body {
   padding: 28px 20px 64px;
 }
 
+.site-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  color: var(--accent);
+  flex: none;
+}
+
+.brand-name {
+  background: linear-gradient(96deg, var(--text) 25%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 header h1 {
   margin: 0 0 6px;
   font-family: var(--font-display);
