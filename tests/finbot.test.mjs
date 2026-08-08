@@ -214,3 +214,34 @@ test('el límite de tasa corta el abuso y aísla por clave', () => {
   assert.equal(rateLimit('u2', { max: 5 }).ok, true)
   resetRateLimit()
 })
+
+// --- exportación ----------------------------------------------------------
+
+const { escapeCell, expensesToCsv } = await import('../lib/csv.js')
+const { listExpenses } = await import('../lib/db.js')
+
+test('escapa comillas, comas y saltos de línea', () => {
+  assert.equal(escapeCell('café'), 'café')
+  assert.equal(escapeCell('taxi, aeropuerto'), '"taxi, aeropuerto"')
+  assert.equal(escapeCell('dijo "barato"'), '"dijo ""barato"""')
+  assert.equal(escapeCell('linea1\nlinea2'), '"linea1\nlinea2"')
+  assert.equal(escapeCell(null), '')
+})
+
+test('neutraliza fórmulas para que Excel no las ejecute', () => {
+  assert.equal(escapeCell('=1+1'), "'=1+1")
+  assert.equal(escapeCell('@SUM(A1)'), "'@SUM(A1)")
+  assert.equal(escapeCell('-2+3'), "'-2+3")
+})
+
+test('exporta los gastos del mes con encabezado', async () => {
+  const user = 'test-export'
+  await handleMessage(user, '25000 mercado', 'test')
+
+  const csv = expensesToCsv(listExpenses(user))
+  const [header, ...filas] = csv.split('\n')
+  assert.equal(header, 'fecha,categoria,descripcion,monto,moneda,origen')
+  assert.equal(filas.length, 1)
+  assert.match(filas[0], /alimentacion/)
+  assert.match(filas[0], /25000/)
+})

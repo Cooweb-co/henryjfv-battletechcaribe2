@@ -90,7 +90,12 @@ export default function Dashboard({ userId, version }) {
 
       {stats.latest.length > 0 && (
         <section className="card">
-          <h2>Últimos movimientos</h2>
+          <div className="card-head">
+            <h2>Últimos movimientos</h2>
+            <a className="link-btn" href={`/api/export?userId=${encodeURIComponent(userId)}&month=${stats.month}`}>
+              Exportar CSV
+            </a>
+          </div>
           <table className="movs">
             <thead>
               <tr>
