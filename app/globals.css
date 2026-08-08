@@ -110,24 +110,54 @@ header p {
   padding-right: 4px;
 }
 
+.msg-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.msg-row.user {
+  justify-content: flex-end;
+}
+
+.avatar {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
 .msg {
-  max-width: 85%;
-  padding: 9px 12px;
-  border-radius: 12px;
+  max-width: 82%;
+  padding: 10px 13px;
+  border-radius: 14px;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
 .msg.user {
-  align-self: flex-end;
   background: var(--accent);
-  color: #fff;
+  color: #08101c;
+  border-bottom-right-radius: 4px;
 }
 
 .msg.bot {
-  align-self: flex-start;
   background: var(--surface-2);
   border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.typing {
+  color: var(--muted);
+  font-style: italic;
 }
 
 .chat-form {

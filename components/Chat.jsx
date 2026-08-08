@@ -50,13 +50,17 @@ export default function Chat({ userId, onUpdate }) {
       <h2>Chat</h2>
       <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-label="Conversación con FinBot">
         {messages.map((m, i) => (
-          <div key={i} className={`msg ${m.role}`}>
-            {m.text}
+          <div key={i} className={`msg-row ${m.role}`}>
+            {m.role === 'bot' && <span className="avatar" aria-hidden="true">FB</span>}
+            <div className={`msg ${m.role}`}>{m.text}</div>
           </div>
         ))}
         {sending && (
-          <div className="msg bot" aria-label="FinBot está respondiendo">
-            Pensando…
+          <div className="msg-row bot">
+            <span className="avatar" aria-hidden="true">FB</span>
+            <div className="msg bot typing" aria-label="FinBot está respondiendo">
+              Pensando…
+            </div>
           </div>
         )}
       </div>
