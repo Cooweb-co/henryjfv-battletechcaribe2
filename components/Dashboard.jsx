@@ -22,7 +22,29 @@ export default function Dashboard({ userId, version }) {
     load()
   }, [load, version])
 
-  if (!stats) return <section className="card">Cargando tu comportamiento de gasto…</section>
+  // Esqueleto en vez de texto: la página no salta de altura cuando llegan los datos.
+  if (!stats) {
+    return (
+      <div className="charts-stack" aria-busy="true" aria-label="Cargando tus datos">
+        <div className="stat-row">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="stat">
+              <div className="skeleton line short" />
+              <div className="skeleton line" />
+            </div>
+          ))}
+        </div>
+        <section className="card">
+          <div className="skeleton line short" />
+          <div className="skeleton block" />
+        </section>
+        <section className="card">
+          <div className="skeleton line short" />
+          <div className="skeleton block tall" />
+        </section>
+      </div>
+    )
+  }
 
   const budget = stats.budget
   const pct = budget.pct ?? 0
