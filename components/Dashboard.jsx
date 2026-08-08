@@ -49,6 +49,17 @@ export default function Dashboard({ userId, version }) {
         </div>
       </div>
 
+      {stats.insights?.length > 0 && (
+        <section className="card">
+          <h2>Qué dicen tus números</h2>
+          <ul className="insights">
+            {stats.insights.map((linea, i) => (
+              <li key={i}>{linea}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {budget.monthly && (
         <section className="card">
           <h2>Presupuesto</h2>

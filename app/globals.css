@@ -327,3 +327,14 @@ table.movs td.num {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+.insights {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.insights li {
+  line-height: 1.45;
+}

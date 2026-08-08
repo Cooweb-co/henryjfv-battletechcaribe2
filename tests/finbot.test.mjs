@@ -147,3 +147,37 @@ test('deshacer sin gastos previos no rompe', async () => {
   const { reply } = await handleMessage('test-deshacer-vacio', '/deshacer', 'test')
   assert.match(reply, /No hay ningún gasto/)
 })
+
+// --- insights -------------------------------------------------------------
+
+const { buildInsights, previousMonth, projection } = await import('../lib/insights.js')
+
+test('calcula el mes anterior incluso cruzando de año', () => {
+  assert.equal(previousMonth('2026-08'), '2026-07')
+  assert.equal(previousMonth('2026-01'), '2025-12')
+})
+
+test('proyecta el cierre del mes con el ritmo observado', async () => {
+  const user = 'test-proyeccion'
+  await handleMessage(user, '100000 mercado', 'test')
+
+  const proy = projection(user)
+  if (proy) {
+    assert.ok(proy.promedioDiario > 0)
+    assert.ok(proy.proyectado >= 100000)
+    assert.equal(proy.proyectado, Math.round(proy.promedioDiario * proy.diasDelMes))
+  }
+})
+
+test('avisa cuando el gasto se concentra en una categoría', async () => {
+  const user = 'test-concentracion'
+  await handleMessage(user, '900000 arriendo', 'test')
+  await handleMessage(user, '10000 cafe', 'test')
+
+  const texto = buildInsights(user).join(' ')
+  assert.match(texto, /vivienda/)
+})
+
+test('sin gastos no inventa observaciones', () => {
+  assert.deepEqual(buildInsights('test-sin-datos'), [])
+})
