@@ -1,0 +1,71 @@
+name: Espejo a JAM-TECH-CARBIE
+
+# Se dispara solo cuando main recibe cambios (o a mano con workflow_dispatch) y replica este
+# repo (commits, ramas y tags) en https://github.com/henryjfv/JAM-TECH-CARBIE.
+# El destino queda identico al origen: las ramas y tags que aqui no existan se borran alla
+# (--prune).
+#
+# Requisito: secret MIRROR_TOKEN en este repo.
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#   Valor: PAT sobre henryjfv/JAM-TECH-CARBIE con permisos
+#     - Contents: Read and write
+#     - Workflows: Read and write   (obligatorio: el espejo incluye .github/workflows/,
+#       y GitHub rechaza el push si el token no puede tocar workflows)
+#   Con un PAT classic equivale a los scopes: repo + workflow.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: mirror
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  espejo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Push espejo al destino
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+          DESTINO: henryjfv/JAM-TECH-CARBIE
+        run: |
+          if [ -z "$MIRROR_TOKEN" ]; then
+            echo "Falta el secret MIRROR_TOKEN." >&2
+            exit 1
+          fi
+
+          git remote add espejo "https://x-access-token:${MIRROR_TOKEN}@github.com/${DESTINO}.git"
+
+          git push --force --prune espejo \
+            "refs/remotes/origin/*:refs/heads/*" \
+            "refs/tags/*:refs/tags/*"
+
+          echo "Espejo actualizado en https://github.com/${DESTINO}"
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "### Espejo"
+            echo ""
+            echo "| Campo | Valor |"
+            echo "|---|---|"
+            echo "| Origen | \`${{ github.repository }}\` |"
+            echo "| Destino | \`henryjfv/JAM-TECH-CARBIE\` |"
+            echo "| Ref | \`${{ github.ref_name }}\` |"
+            echo "| Commit | \`${{ github.sha }}\` |"
+            echo "| Resultado | \`${{ job.status }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
