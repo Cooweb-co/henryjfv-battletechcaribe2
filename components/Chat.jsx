@@ -9,6 +9,7 @@ export default function Chat({ userId, onUpdate }) {
   const [messages, setMessages] = useState([{ role: 'bot', text: SALUDO }])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [engine, setEngine] = useState(null)
   const logRef = useRef(null)
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function Chat({ userId, onUpdate }) {
         ...prev,
         { role: 'bot', text: data.reply ?? data.error ?? 'Algo falló procesando el mensaje.' },
       ])
+      if (data.engine) setEngine(data.engine)
       onUpdate?.()
     } catch {
       setMessages((prev) => [...prev, { role: 'bot', text: 'No pude conectarme al servidor. Intenta otra vez.' }])
@@ -70,7 +72,10 @@ export default function Chat({ userId, onUpdate }) {
           Enviar
         </button>
       </form>
-      <p className="hints">Comandos: /resumen · /presupuesto 1500000 · /ayuda</p>
+      <p className="hints">Comandos: /resumen · /presupuesto 1500000 · /deshacer · /ayuda</p>
+      {engine === 'heuristica' && (
+        <p className="hints">Sin ANTHROPIC_API_KEY: estoy interpretando con reglas locales, no con Claude.</p>
+      )}
     </section>
   )
 }
