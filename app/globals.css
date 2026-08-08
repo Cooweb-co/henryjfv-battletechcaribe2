@@ -1,5 +1,11 @@
 :root {
   color-scheme: dark;
+
+  /* Tipografía: display con serif de sistema para dar carácter sin cargar
+     webfonts; el cuerpo se queda en la sans nativa por legibilidad. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   --bg: #0f1115;
   --surface: #171a21;
   --surface-2: #1f232c;
@@ -20,7 +26,9 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 15px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .shell {
@@ -30,9 +38,12 @@ body {
 }
 
 header h1 {
-  margin: 0 0 4px;
-  font-size: 26px;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 40px);
+  font-weight: 600;
   letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 header p {
@@ -157,10 +168,11 @@ header p {
 }
 
 .stat .value {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 650;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   margin-top: 4px;
+  font-variant-numeric: tabular-nums;
 }
 
 .bar-track {
@@ -265,6 +277,7 @@ header p {
   fill: var(--text);
   font-size: 11px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .chart-wrap rect,
