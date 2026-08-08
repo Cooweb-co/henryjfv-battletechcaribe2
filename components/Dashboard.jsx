@@ -45,7 +45,9 @@ export default function Dashboard({ userId, version }) {
         </div>
         <div className="stat">
           <div className="label">Categoría dominante</div>
-          <div className="value">{stats.topCategory ?? '—'}</div>
+          <div className="value">
+            {stats.topCategory ? stats.topCategory[0].toUpperCase() + stats.topCategory.slice(1) : '—'}
+          </div>
         </div>
       </div>
 

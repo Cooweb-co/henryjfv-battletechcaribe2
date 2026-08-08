@@ -333,6 +333,27 @@ header p {
 .chart-wrap .tick {
   fill: var(--muted);
   font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-wrap .tick.label {
+  fill: var(--text);
+  font-size: 12px;
+}
+
+.chart-wrap rect,
+.chart-wrap circle {
+  transition: opacity 0.12s ease;
+}
+
+.chart-wrap:hover rect,
+.chart-wrap:hover circle {
+  opacity: 0.82;
+}
+
+.chart-wrap rect:hover,
+.chart-wrap circle:hover {
+  opacity: 1;
 }
 
 .chart-wrap .value {

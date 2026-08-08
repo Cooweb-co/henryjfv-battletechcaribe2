@@ -12,6 +12,8 @@ const fmt = (n) =>
 
 const compact = (n) => new Intl.NumberFormat('es-CO', { notation: 'compact', maximumFractionDigits: 1 }).format(n ?? 0)
 
+const titulo = (texto) => (texto ? texto[0].toUpperCase() + texto.slice(1) : texto)
+
 function useTooltip() {
   const [tip, setTip] = useState(null)
   const show = (event, text) => {
@@ -50,8 +52,8 @@ export function CategoryBars({ data }) {
           const y = i * rowH + 4
           return (
             <g key={d.category}>
-              <text x={0} y={y + 15} className="tick" dominantBaseline="middle">
-                {d.category}
+              <text x={0} y={y + 15} className="tick label" dominantBaseline="middle">
+                {titulo(d.category)}
               </text>
               <rect
                 x={labelW}
@@ -60,7 +62,7 @@ export function CategoryBars({ data }) {
                 height={16}
                 rx={4}
                 fill={SERIES_1}
-                onMouseMove={(e) => show(e, `${d.category}: ${fmt(d.total)} · ${d.n} mov.`)}
+                onMouseMove={(e) => show(e, `${titulo(d.category)}: ${fmt(d.total)} · ${d.n} mov.`)}
               />
               <text x={labelW + w + 8} y={y + 15} className="value" dominantBaseline="middle">
                 {compact(d.total)}
