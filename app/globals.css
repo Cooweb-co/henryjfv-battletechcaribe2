@@ -105,9 +105,20 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 420px;
+  height: clamp(300px, 45dvh, 460px);
   overflow-y: auto;
   padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.chat-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-log::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
 }
 
 .msg-row {
@@ -472,4 +483,49 @@ table.movs td.num {
 
 ::selection {
   background: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* --- Móvil --- */
+@media (max-width: 640px) {
+  .shell {
+    padding: 20px 14px 48px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat .value {
+    font-size: 20px;
+  }
+
+  .msg {
+    max-width: 88%;
+  }
+
+  .card-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  table.movs {
+    font-size: 12px;
+  }
+
+  table.movs th:nth-child(3),
+  table.movs td:nth-child(3) {
+    display: none; /* el detalle se cae primero: la fecha y el monto pesan más */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
