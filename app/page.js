@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Chat from '../components/Chat'
 import Dashboard from '../components/Dashboard'
+import Footer from '../components/Footer'
 
 /**
  * Cada navegador tiene su propio id: sin esto, todas las visitas comparten los
@@ -42,6 +43,8 @@ export default function Home() {
       ) : (
         <p className="empty">Preparando tu sesión…</p>
       )}
+
+      <Footer />
     </main>
   )
 }
