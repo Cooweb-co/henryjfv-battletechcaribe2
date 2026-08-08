@@ -240,3 +240,90 @@ header p {
 .chart-scroll {
   overflow-x: auto;
 }
+
+/* --- Gráficas (paleta validada con scripts/validate_palette.js) --- */
+:root {
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --grid: #dfe3e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --grid: #2a2f3a;
+  }
+}
+
+.chart-wrap {
+  position: relative;
+}
+
+.chart-wrap svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-wrap .grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.chart-wrap .tick {
+  fill: var(--muted);
+  font-size: 11px;
+}
+
+.chart-wrap .value {
+  fill: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chart-wrap rect,
+.chart-wrap circle {
+  cursor: pointer;
+}
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  background: var(--text);
+  color: var(--bg);
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.charts-stack {
+  display: grid;
+  gap: 20px;
+}
+
+table.movs {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.movs th,
+table.movs td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+table.movs th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+table.movs td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
