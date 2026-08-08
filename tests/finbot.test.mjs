@@ -245,3 +245,17 @@ test('exporta los gastos del mes con encabezado', async () => {
   assert.match(filas[0], /alimentacion/)
   assert.match(filas[0], /25000/)
 })
+
+test('reconoce vocabulario cotidiano de gasto', () => {
+  const casos = {
+    '18000 domicilio': 'alimentacion',
+    '6000 pasaje': 'transporte',
+    '80000 recibo de luz': 'servicios',
+    '45000 peluquería': 'compras',
+    '30000 vitaminas': 'salud',
+    '25000 teatro': 'entretenimiento',
+  }
+  for (const [texto, categoria] of Object.entries(casos)) {
+    assert.equal(fallbackParse(texto).expenses[0]?.category, categoria, texto)
+  }
+})
