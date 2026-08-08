@@ -259,3 +259,10 @@ test('reconoce vocabulario cotidiano de gasto', () => {
     assert.equal(fallbackParse(texto).expenses[0]?.category, categoria, texto)
   }
 })
+
+test('/categorias lista las categorías disponibles', async () => {
+  const { reply } = await handleMessage('test-categorias', '/categorias', 'test')
+  assert.match(reply, /alimentacion/)
+  assert.match(reply, /transporte/)
+  assert.match(reply, /otros/)
+})
