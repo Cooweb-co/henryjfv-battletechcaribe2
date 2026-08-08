@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --bg: #0f1115;
   --surface: #171a21;
   --surface-2: #1f232c;
@@ -9,17 +10,6 @@
   --ok: #3ecf8e;
   --warn: #f5a623;
   --danger: #ef5b5b;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --surface-2: #f0f2f5;
-    --border: #dfe3e8;
-    --text: #16181d;
-    --muted: #5b6472;
-  }
 }
 
 * {
@@ -241,19 +231,14 @@ header p {
   overflow-x: auto;
 }
 
-/* --- Gráficas (paleta validada con scripts/validate_palette.js) --- */
+/* --- Gráficas ---
+   Pasos para superficie oscura (#171a21). Validados con
+   scripts/validate_palette.js del skill dataviz: banda de luminosidad, piso de
+   croma, separación CVD (ΔE 26.8 protan) y contraste ≥ 3:1. */
 :root {
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --grid: #dfe3e8;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --grid: #2a2f3a;
-  }
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --grid: #2a2f3a;
 }
 
 .chart-wrap {
