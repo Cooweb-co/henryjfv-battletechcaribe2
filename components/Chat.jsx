@@ -46,13 +46,17 @@ export default function Chat({ userId, onUpdate }) {
   return (
     <section className="card">
       <h2>Chat</h2>
-      <div className="chat-log" ref={logRef}>
+      <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-label="Conversación con FinBot">
         {messages.map((m, i) => (
           <div key={i} className={`msg ${m.role}`}>
             {m.text}
           </div>
         ))}
-        {sending && <div className="msg bot">Pensando…</div>}
+        {sending && (
+          <div className="msg bot" aria-label="FinBot está respondiendo">
+            Pensando…
+          </div>
+        )}
       </div>
 
       <form className="chat-form" onSubmit={send}>
