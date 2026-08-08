@@ -181,3 +181,36 @@ test('avisa cuando el gasto se concentra en una categoría', async () => {
 test('sin gastos no inventa observaciones', () => {
   assert.deepEqual(buildInsights('test-sin-datos'), [])
 })
+
+// --- defensas de las rutas ------------------------------------------------
+
+const { rateLimit, resetRateLimit, sanitizeMessage, sanitizeUserId } = await import('../lib/security.js')
+
+test('valida el formato del userId', () => {
+  assert.equal(sanitizeUserId('web-a1b2c3d4'), 'web-a1b2c3d4')
+  assert.equal(sanitizeUserId('tg:123456'), 'tg:123456')
+  assert.equal(sanitizeUserId(''), null)
+  assert.equal(sanitizeUserId('con espacios'), null)
+  assert.equal(sanitizeUserId('../../etc/passwd'), null)
+  assert.equal(sanitizeUserId('x'.repeat(65)), null)
+  assert.equal(sanitizeUserId(42), null)
+})
+
+test('rechaza mensajes vacíos o desmedidos', () => {
+  assert.equal(sanitizeMessage('  hola  ').text, 'hola')
+  assert.equal(sanitizeMessage('   ').ok, false)
+  assert.equal(sanitizeMessage('a'.repeat(501)).ok, false)
+  assert.equal(sanitizeMessage(null).ok, false)
+})
+
+test('el límite de tasa corta el abuso y aísla por clave', () => {
+  resetRateLimit()
+  for (let i = 0; i < 5; i++) assert.equal(rateLimit('u1', { max: 5 }).ok, true)
+
+  const bloqueado = rateLimit('u1', { max: 5 })
+  assert.equal(bloqueado.ok, false)
+  assert.ok(bloqueado.retryAfter > 0)
+
+  assert.equal(rateLimit('u2', { max: 5 }).ok, true)
+  resetRateLimit()
+})
