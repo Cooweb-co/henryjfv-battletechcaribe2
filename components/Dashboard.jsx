@@ -87,10 +87,20 @@ export default function Dashboard({ userId, version }) {
       {budget.monthly && (
         <section className="card">
           <h2>Presupuesto</h2>
-          <div>
-            {fmt(budget.spent)} de {fmt(budget.monthly)} · {pct}%
+          <div className="budget-row">
+            <span>
+              {fmt(budget.spent)} <span className="muted">de {fmt(budget.monthly)}</span>
+            </span>
+            <span className={`pct ${fillClass}`}>{pct}%</span>
           </div>
-          <div className="bar-track">
+          <div
+            className="bar-track"
+            role="progressbar"
+            aria-valuenow={pct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Porcentaje del presupuesto mensual consumido"
+          >
             <div className={`bar-fill ${fillClass}`} style={{ width: `${Math.min(100, pct)}%` }} />
           </div>
           <div className={`alert ${budget.over ? '' : 'ok'}`}>{budget.message}</div>
