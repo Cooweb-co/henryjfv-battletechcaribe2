@@ -109,3 +109,41 @@ test('un mensaje vacío no rompe el bot', async () => {
 })
 
 test.after(() => fs.rmSync(tmp, { recursive: true, force: true }))
+
+// --- corrección y deshacer ------------------------------------------------
+
+const { lastExpense } = await import('../lib/db.js')
+
+test('corrige el monto del último gasto', async () => {
+  const user = 'test-correccion'
+  await handleMessage(user, '20 mil en café', 'test')
+
+  const { reply } = await handleMessage(user, 'no eran 20 mil, eran 30 mil', 'test')
+  assert.match(reply, /Corregido/)
+  assert.equal(lastExpense(user).amount, 30000)
+  assert.equal(monthTotal(user).total, 30000)
+})
+
+test('corrige la categoría del último gasto', async () => {
+  const user = 'test-recategoriza'
+  await handleMessage(user, '18000 almuerzo', 'test')
+
+  await handleMessage(user, 'en realidad fue un taxi', 'test')
+  assert.equal(lastExpense(user).category, 'transporte')
+  assert.equal(lastExpense(user).amount, 18000)
+})
+
+test('borra el último gasto y ajusta el total', async () => {
+  const user = 'test-deshacer'
+  await handleMessage(user, '10000 cafe', 'test')
+  await handleMessage(user, '90000 mercado', 'test')
+
+  const { reply } = await handleMessage(user, 'borra el último', 'test')
+  assert.match(reply, /Borré/)
+  assert.equal(monthTotal(user).total, 10000)
+})
+
+test('deshacer sin gastos previos no rompe', async () => {
+  const { reply } = await handleMessage('test-deshacer-vacio', '/deshacer', 'test')
+  assert.match(reply, /No hay ningún gasto/)
+})
