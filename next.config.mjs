@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // better-sqlite3 es un módulo nativo: no debe pasar por el bundler del server.
-  serverExternalPackages: ['better-sqlite3'],
+  // @libsql/client habla HTTP y no arrastra binarios nativos, así que no hace
+  // falta excluir nada del bundler del server.
 }
 
 export default nextConfig

@@ -28,7 +28,7 @@ export async function POST(request) {
 
   try {
     const result = await handleMessage(userId, message.text, 'web')
-    return Response.json({ ...result, budget: budgetStatus(userId) })
+    return Response.json({ ...result, budget: await budgetStatus(userId) })
   } catch (err) {
     // El detalle va al log del servidor; al cliente solo el mensaje genérico.
     console.error('[finbot] error atendiendo el chat:', err)

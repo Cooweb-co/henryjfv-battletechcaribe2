@@ -17,8 +17,18 @@ export async function GET(request) {
   const limit = rateLimit(`stats:${userId}`, { max: 60 })
   if (!limit.ok) return Response.json({ error: 'Demasiadas consultas' }, { status: 429 })
 
-  const { total, count } = monthTotal(userId, month)
-  const byCategory = totalByCategory(userId, month)
+  // Cada consulta es un viaje de red a la base: se lanzan juntas para que la
+  // latencia sea la de la más lenta y no la suma de todas.
+  const [{ total, count }, byCategory, byDay, trend, budget, insights, proyeccion, latest] = await Promise.all([
+    monthTotal(userId, month),
+    totalByCategory(userId, month),
+    totalByDay(userId, month),
+    monthlyTrend(userId, 6),
+    budgetStatus(userId, month),
+    buildInsights(userId, month),
+    projection(userId, month),
+    listExpenses(userId, { month, limit: 8 }),
+  ])
 
   return Response.json({
     month,
@@ -27,11 +37,11 @@ export async function GET(request) {
     average: count ? Math.round(total / count) : 0,
     topCategory: byCategory[0]?.category ?? null,
     byCategory,
-    byDay: totalByDay(userId, month),
-    trend: monthlyTrend(userId, 6),
-    budget: budgetStatus(userId, month),
-    insights: buildInsights(userId, month),
-    projection: projection(userId, month),
-    latest: listExpenses(userId, { month, limit: 8 }),
+    byDay,
+    trend,
+    budget,
+    insights,
+    projection: proyeccion,
+    latest,
   })
 }

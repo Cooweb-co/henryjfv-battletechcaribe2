@@ -48,11 +48,11 @@ test('persiste el gasto y lo suma al mes', async () => {
   await handleMessage(user, 'gasté 20 mil en café', 'test')
   await handleMessage(user, '30000 taxi', 'test')
 
-  const { total, count } = monthTotal(user)
+  const { total, count } = await monthTotal(user)
   assert.equal(total, 50000)
   assert.equal(count, 2)
 
-  const categorias = totalByCategory(user).map((c) => c.category)
+  const categorias = (await totalByCategory(user)).map((c) => c.category)
   assert.deepEqual(categorias.sort(), ['alimentacion', 'transporte'])
 })
 
@@ -61,14 +61,14 @@ test('alerta cuando el gasto supera el presupuesto', async () => {
   await handleMessage(user, '/presupuesto 50000', 'test')
   await handleMessage(user, '20000 almuerzo', 'test')
 
-  let estado = budgetStatus(user)
+  let estado = await budgetStatus(user)
   assert.equal(estado.over, false)
   assert.equal(estado.pct, 40)
 
   const { reply } = await handleMessage(user, '45000 taxi', 'test')
   assert.match(reply, /ALERTA/)
 
-  estado = budgetStatus(user)
+  estado = await budgetStatus(user)
   assert.equal(estado.over, true)
   assert.equal(estado.spent, 65000)
 })
@@ -78,7 +78,7 @@ test('avisa al 80% del presupuesto antes de pasarse', async () => {
   await handleMessage(user, '/presupuesto 100000', 'test')
   await handleMessage(user, '85000 mercado', 'test')
 
-  const estado = budgetStatus(user)
+  const estado = await budgetStatus(user)
   assert.equal(estado.over, false)
   assert.match(estado.message, /Atención/)
 })
@@ -88,7 +88,7 @@ test('el resumen desglosa por categoría con porcentajes', async () => {
   await handleMessage(user, '75000 mercado', 'test')
   await handleMessage(user, '25000 uber', 'test')
 
-  const texto = summaryText(user)
+  const texto = await summaryText(user)
   assert.match(texto, /Total gastado/)
   assert.match(texto, /alimentacion: .*75/)
   assert.match(texto, /75%/)
@@ -99,8 +99,8 @@ test('los usuarios no ven los gastos de otros', async () => {
   await handleMessage('test-ana', '10000 cafe', 'test')
   await handleMessage('test-luis', '99000 arriendo', 'test')
 
-  assert.equal(monthTotal('test-ana').total, 10000)
-  assert.equal(monthTotal('test-luis').total, 99000)
+  assert.equal((await monthTotal('test-ana')).total, 10000)
+  assert.equal((await monthTotal('test-luis')).total, 99000)
 })
 
 test('un mensaje vacío no rompe el bot', async () => {
@@ -120,8 +120,8 @@ test('corrige el monto del último gasto', async () => {
 
   const { reply } = await handleMessage(user, 'no eran 20 mil, eran 30 mil', 'test')
   assert.match(reply, /Corregido/)
-  assert.equal(lastExpense(user).amount, 30000)
-  assert.equal(monthTotal(user).total, 30000)
+  assert.equal((await lastExpense(user)).amount, 30000)
+  assert.equal((await monthTotal(user)).total, 30000)
 })
 
 test('corrige la categoría del último gasto', async () => {
@@ -129,8 +129,8 @@ test('corrige la categoría del último gasto', async () => {
   await handleMessage(user, '18000 almuerzo', 'test')
 
   await handleMessage(user, 'en realidad fue un taxi', 'test')
-  assert.equal(lastExpense(user).category, 'transporte')
-  assert.equal(lastExpense(user).amount, 18000)
+  assert.equal((await lastExpense(user)).category, 'transporte')
+  assert.equal((await lastExpense(user)).amount, 18000)
 })
 
 test('borra el último gasto y ajusta el total', async () => {
@@ -140,7 +140,7 @@ test('borra el último gasto y ajusta el total', async () => {
 
   const { reply } = await handleMessage(user, 'borra el último', 'test')
   assert.match(reply, /Borré/)
-  assert.equal(monthTotal(user).total, 10000)
+  assert.equal((await monthTotal(user)).total, 10000)
 })
 
 test('deshacer sin gastos previos no rompe', async () => {
@@ -161,7 +161,7 @@ test('proyecta el cierre del mes con el ritmo observado', async () => {
   const user = 'test-proyeccion'
   await handleMessage(user, '100000 mercado', 'test')
 
-  const proy = projection(user)
+  const proy = await projection(user)
   if (proy) {
     assert.ok(proy.promedioDiario > 0)
     assert.ok(proy.proyectado >= 100000)
@@ -174,12 +174,12 @@ test('avisa cuando el gasto se concentra en una categoría', async () => {
   await handleMessage(user, '900000 arriendo', 'test')
   await handleMessage(user, '10000 cafe', 'test')
 
-  const texto = buildInsights(user).join(' ')
+  const texto = (await buildInsights(user)).join(' ')
   assert.match(texto, /vivienda/)
 })
 
-test('sin gastos no inventa observaciones', () => {
-  assert.deepEqual(buildInsights('test-sin-datos'), [])
+test('sin gastos no inventa observaciones', async () => {
+  assert.deepEqual(await buildInsights('test-sin-datos'), [])
 })
 
 // --- defensas de las rutas ------------------------------------------------
@@ -238,7 +238,7 @@ test('exporta los gastos del mes con encabezado', async () => {
   const user = 'test-export'
   await handleMessage(user, '25000 mercado', 'test')
 
-  const csv = expensesToCsv(listExpenses(user))
+  const csv = expensesToCsv(await listExpenses(user))
   const [header, ...filas] = csv.split('\n')
   assert.equal(header, 'fecha,categoria,descripcion,monto,moneda,origen')
   assert.equal(filas.length, 1)

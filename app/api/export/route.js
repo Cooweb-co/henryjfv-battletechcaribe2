@@ -17,7 +17,7 @@ export async function GET(request) {
   const limit = rateLimit(`export:${userId}`, { max: 10 })
   if (!limit.ok) return Response.json({ error: 'Demasiadas descargas seguidas' }, { status: 429 })
 
-  const csv = expensesToCsv(listExpenses(userId, { month, limit: 5000 }))
+  const csv = expensesToCsv(await listExpenses(userId, { month, limit: 5000 }))
 
   return new Response(csv, {
     headers: {
