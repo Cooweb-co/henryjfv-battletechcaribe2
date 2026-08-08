@@ -266,3 +266,9 @@ test('/categorias lista las categorías disponibles', async () => {
   assert.match(reply, /transporte/)
   assert.match(reply, /otros/)
 })
+
+test('la respuesta no arrastra espacios sobrantes', async () => {
+  const { reply } = await handleMessage('test-espacios', '9000 cafe', 'test')
+  assert.equal(reply, reply.trim())
+  assert.doesNotMatch(reply, /\s{2,}/)
+})
