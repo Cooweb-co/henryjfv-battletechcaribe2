@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 const SALUDO =
   'Hola, soy FinBot. Cuéntame en qué gastaste y lo registro. Prueba con "gasté 20 mil en café" o pídeme "/resumen".'
 
+// Arrancar desde cero cuesta: estos atajos muestran de qué es capaz el bot.
+const SUGERENCIAS = ['gasté 20 mil en café', '35000 mercado y 8000 bus', '/presupuesto 1500000', '/resumen']
+
 export default function Chat({ userId, onUpdate }) {
   const [messages, setMessages] = useState([{ role: 'bot', text: SALUDO }])
   const [input, setInput] = useState('')
@@ -16,9 +19,9 @@ export default function Chat({ userId, onUpdate }) {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
-  async function send(event) {
-    event.preventDefault()
-    const text = input.trim()
+  async function send(event, preset) {
+    event?.preventDefault()
+    const text = (preset ?? input).trim()
     if (!text || sending) return
 
     setMessages((prev) => [...prev, { role: 'user', text }])
@@ -76,6 +79,14 @@ export default function Chat({ userId, onUpdate }) {
           Enviar
         </button>
       </form>
+      <div className="chips">
+        {SUGERENCIAS.map((s) => (
+          <button key={s} type="button" className="chip" onClick={() => send(null, s)} disabled={sending}>
+            {s}
+          </button>
+        ))}
+      </div>
+
       <p className="hints">Comandos: /resumen · /presupuesto 1500000 · /deshacer · /ayuda</p>
       {engine === 'heuristica' && (
         <p className="hints">Sin ANTHROPIC_API_KEY: estoy interpretando con reglas locales, no con Claude.</p>
