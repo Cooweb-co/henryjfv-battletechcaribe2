@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // @libsql/client habla HTTP y no arrastra binarios nativos, así que no hace
-  // falta excluir nada del bundler del server.
+  // @libsql/client carga bindings nativos para el modo file:. Si pasa por el
+  // bundler del server, compila pero revienta en runtime con 500 (en dev no se
+  // nota: dev no bundlea igual). Debe quedar fuera.
+  serverExternalPackages: ['@libsql/client', 'libsql'],
 }
 
 export default nextConfig
